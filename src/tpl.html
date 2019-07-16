@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+  <!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./style.css" />
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      .fixed-content-box {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+      }
+      .fixed-content-box .fixed-bg-box {
+        width: 75%;
+        height: 70vh;
+        background: url(./img/bg@3x.png) no-repeat center top;
+        background-size: contain;
+        padding: 15% 13%;
+        box-sizing: border-box;
+        color: #fff;
+      }
+      .fixed-bg-box .wechart-erweima-sec {
+        position: relative;
+        text-align: center;
+        margin-bottom: 35%;
+      }
+      .wechart-erweima-sec .bg-title {
+        font-size: 16px;
+        font-weight: 400;
+        padding-bottom: 8px;
+        text-align: center;
+      }
+      .wechart-erweima-sec .bg-erweima img {
+        display: block;
+        width: 62%;
+        margin: auto;
+      }
+      .wechart-erweima-sec .bg-dicr {
+        font-size: 14px;
+        text-align: center;
+        margin-top: 6px;
+        background: -webkit-linear-gradient(
+          left top,
+          #f4a625,
+          rgba(127, 192, 82, 0)
+        );
+        background: -moz-linear-gradient(
+          left top,
+          #f4a625,
+          rgba(127, 192, 82, 0)
+        );
+        background: -ms-linear-gradient(
+          left top,
+          #f4a625,
+          rgba(127, 192, 82, 0)
+        );
+        display: inline-block;
+      }
+      .wechart-erweima-sec .bg-tip {
+        position: absolute;
+        top: 20%;
+        right: 8%;
+        font-size: 12px;
+        width: 14px;
+        word-wrap: break-word;
+        letter-spacing: 20px;
+      }
+      .fixed-bg-box .button-group {
+        width: 50%;
+        line-height: 2.4;
+        font-size: 14px;
+        text-align: center;
+        margin: auto;
+        background-color: #009bff;
+        font-weight: bold;
+        border-radius: 4px;
+        -webkit-box-shadow: 3px 3px #003aea;
+        -moz-box-shadow: 3px 3px #003aea;
+        box-shadow: 3px 3px #003aea;
+      }
+      .fixed-bg-box .close-button {
+        position: absolute;
+        bottom: -5%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        border: 1px solid #fff;
+        position: relative;
+        margin-left: -20px;
+      }
+      .fixed-bg-box .close-button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 15%;
+        border-top: 1px solid #fff;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        transform: rotate(45deg);
+        width: 70%;
+      }
+      .fixed-bg-box .close-button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 15%;
+        border-top: 1px solid #fff;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        transform: rotate(-45deg);
+        width: 70%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fixed-content-box" flex="main:center cross:center">
+      <div class="fixed-bg-box">
+        <div class="wechart-erweima-sec">
+          <h3 class="bg-title">关注公众号更多精彩游戏</h3>
+          <div class="bg-erweima">
+            <img
+              src="http://image.thepaper.cn/www/image/8/856/505.jpg"
+              alt=""
+            />
+          </div>
+          <p class="bg-dicr">微信公众号.in游戏竞技场</p>
+          <div class="bg-tip">长按识别二维码</div>
+        </div>
+        <div class="button-group">
+          仍要退出
+        </div>
+        <div class="close-button"></div>
+      </div>
+    </div>
+  </body>
+</html>
