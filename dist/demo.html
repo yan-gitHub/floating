@@ -1,12 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
-  </head>
-  <body>
-    <a href="https://192.168.31.213:8990/index.html">0987656789089098</a>
-  </body>
-</html>
+Html Webpack Plugin:
+<pre>
+  Error: Child compilation failed:
+  Entry module not found: Error: Can't resolve '/Users/yanshuya/yan/leam/inZhiXun/floati  ng/src/demo.html' in '/Users/yanshuya/yan/leam/inZhiXun/floating':
+  Error: Can't resolve '/Users/yanshuya/yan/leam/inZhiXun/floating/src/demo.html' in '/U  sers/yanshuya/yan/leam/inZhiXun/floating'
+  
+  - compiler.js:79 childCompiler.runAsChild
+    [floating]/[html-webpack-plugin]/lib/compiler.js:79:16
+  
+  - Compiler.js:306 compile
+    [floating]/[webpack]/lib/Compiler.js:306:11
+  
+  - Compiler.js:631 hooks.afterCompile.callAsync.err
+    [floating]/[webpack]/lib/Compiler.js:631:15
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compiler.js:628 compilation.seal.err
+    [floating]/[webpack]/lib/Compiler.js:628:31
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compilation.js:1325 hooks.optimizeAssets.callAsync.err
+    [floating]/[webpack]/lib/Compilation.js:1325:35
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compilation.js:1316 hooks.optimizeChunkAssets.callAsync.err
+    [floating]/[webpack]/lib/Compilation.js:1316:32
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compilation.js:1311 hooks.additionalAssets.callAsync.err
+    [floating]/[webpack]/lib/Compilation.js:1311:36
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compilation.js:1307 hooks.optimizeTree.callAsync.err
+    [floating]/[webpack]/lib/Compilation.js:1307:32
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compilation.js:1244 Compilation.seal
+    [floating]/[webpack]/lib/Compilation.js:1244:27
+  
+  - Compiler.js:625 compilation.finish.err
+    [floating]/[webpack]/lib/Compiler.js:625:18
+  
+  - Compilation.js:1167 hooks.finishModules.callAsync.err
+    [floating]/[webpack]/lib/Compilation.js:1167:4
+  
+  
+  - Hook.js:154 AsyncSeriesHook.lazyCompileHook
+    [floating]/[webpack]/[tapable]/lib/Hook.js:154:20
+  
+  - Compilation.js:1159 Compilation.finish
+    [floating]/[webpack]/lib/Compilation.js:1159:28
+  
+  - Compiler.js:622 hooks.make.callAsync.err
+    [floating]/[webpack]/lib/Compiler.js:622:17
+  
+  
+  - Compilation.js:1091 _addModuleChain
+    [floating]/[webpack]/lib/Compilation.js:1091:12
+  
+  - Compilation.js:945 errorAndCallback.bail.err
+    [floating]/[webpack]/lib/Compilation.js:945:6
+  
+</pre>

@@ -1,4 +1,5 @@
-import { throws } from 'assert';
+import closeImg from '../img/icn_hide@3x.png';
+import wechart from '../img/icn_wechat@3x.png';
 
 /*
 1、判断页面有没有盒子，有？追加生成的元素，无？创建元素追加
@@ -25,6 +26,8 @@ class Init {
     };
     this.searchWidth = window.screen.availWidth;
     this.searchHeight = window.screen.availHeight;
+    this.clickHandler = null;
+    this.timer = null;
   }
 
   render() {
@@ -67,17 +70,30 @@ class Init {
 
   createHtml() {
     const data = this.data;
-    const list = (data.button || []).map(v => {
+    const leng = (data.button || []).length;
+    const list = (data.button || []).map((v, idx) => {
       if (+v.is_active !== 1) {
         return '';
       }
-      return `<li class="target">
-              <a href="${v.url || ''}">
-                <img src="${v.img ||
-                  ''}" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
-                <span>${(v.title || '').substr(0, 4)}</span>
-              </a>
-            </li>`;
+      if (idx == 0) {
+        return `<li class="hide-floating">
+                <img src="https://xcx.api.test.1hocang.com/static/img/icn_hide@3x.png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
+                <span>隐藏</span>
+              </li>`;
+      } else if (idx == leng - 1) {
+        return `<li class="wechart">
+                <img src="https://xcx.api.test.1hocang.com/static/img/icn_wechat@3x.png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;" />
+                <span>微信公众号</span>
+              </li>`;
+      } else {
+        return `<li class="target">
+                <a href="${v.url || ''}">
+                  <img src="${v.img ||
+                    ''}" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
+                  <span>${(v.title || '').substr(0, 4)}</span>
+                </a>
+              </li>`;
+      }
     });
     //正常样式 <ul flex="main:left cross:center">
     // <div id="floating-container" class="floating-container flex-dir-right">
@@ -86,21 +102,13 @@ class Init {
        <div id="floating-container" class="floating-container">
         <div class="content-box">
           <div class="button-icon-box">
-            <span></span>
+            <img src="${
+              data.open_img
+            }" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
           </div>
           <div class="list-box">
             <ul flex="main:left cross:center box:last">
-
-              <li class="hide-floating">
-                <img src="${data.open_img ||
-                  ''}" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
-                <span>隐藏</span>
-              </li>
             ${list.join('')}
-              <li class="wechart">
-                <img src="./img/icn_wechat@3x(1).png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;" />
-                <span>微信公众号</span>
-              </li>
             </ul>
           </div>
         </div>
@@ -129,6 +137,9 @@ class Init {
       }
     } else {
       listBox.toggleClass('hidden');
+      container.css({
+        left: 0
+      });
     }
   }
 
@@ -140,12 +151,57 @@ class Init {
   adLog(params = {}, eventType = 'action') {
     switch (eventType) {
       case 'click':
-        $.post('http://h5game.api.crotnet.com/loating/api/cilck', params);
+        $.post('https://h5game.api.crotnet.com/loating/api/cilck', params);
         break;
       case 'action':
-        $.post('http://h5game.api.crotnet.com/loating/api/action', params);
+        $.post('https://h5game.api.crotnet.com/loating/api/action', params);
         break;
     }
+  }
+  hideFloating() {
+    let container = $('#floating-container');
+    let listBox = $('.list-box');
+    if (!listBox.hasClass('hidden')) {
+      clearTimeout(this.timer);
+      const isLeft = container.hasClass('flex-dir-right');
+      const left = this.searchWidth - 25 + 'px';
+      this.timer = setTimeout(() => {
+        container.css({
+          left: !isLeft ? '-25px' : left,
+          opacity: 0.5
+        });
+      }, 3000);
+    }
+  }
+  correctPosition(payload = {}) {
+    let container = $('#floating-container');
+    let floatIcon = $('.button-icon-box');
+    let listBox = $('.list-box');
+    let center = $(window).width() / 2;
+    let boxW = floatIcon.width();
+    let { x, y } = payload;
+    if (listBox.hasClass('hidden')) {
+      boxW = listBox.outerWidth();
+    }
+    let divCenter = boxW / 2;
+    // const { x, center, divCenter } = payload;
+    if (center >= x + divCenter) {
+      x = 0;
+    } else {
+      // console.log('宽度', $(window).width(), container.width());
+      // (boxW > 50 ? boxW : 0)
+      x = this.searchWidth - (boxW > 50 ? boxW : 50);
+      container.addClass('flex-dir-right');
+    }
+    if (y < 0) {
+      y = 0;
+    } else if (y > this.searchHeight) {
+      y = this.searchHeight - 50;
+    }
+    container.css({
+      left: x + 'px',
+      top: y + 'px'
+    });
   }
   bindEvent() {
     let container = $('#floating-container');
@@ -171,10 +227,7 @@ class Init {
     let x = 0;
     let distenceX = '';
     let distenceY = '';
-    let timer = null;
     let isMover = false;
-    const searchWidth = window.screen.availWidth;
-    const searchHeight = window.screen.availHeight;
     container.Tdrag({
       scope: '',
       // animation_options: {
@@ -194,8 +247,7 @@ class Init {
         if (!ev.cancelable) {
           return;
         }
-        clearTimeout(timer);
-
+        clearTimeout(this.timer);
         isMover = true;
         let touchX = ev.clientX || ev.originalEvent.changedTouches[0].clientX;
         let touchY = ev.clientY || ev.originalEvent.changedTouches[0].clientY;
@@ -205,33 +257,35 @@ class Init {
         if (listBox.hasClass('hidden')) {
           boxW = listBox.outerWidth();
         }
-        domRect = container[0].getBoundingClientRect();
-        if (domRect.left + boxW / 2 < this.searchWidth / 2) {
+        const moveRect = container[0].getBoundingClientRect();
+        if (moveRect.left + boxW / 2 < this.searchWidth / 2) {
           container.removeClass('flex-dir-right');
+          floatIcon.css({
+            left: 0
+          });
         } else {
           container.addClass('flex-dir-right');
+          if (listBox.hasClass('hidden')) {
+            floatIcon.css({
+              left: 'calc(100% - 50px)'
+            });
+          } else {
+            floatIcon.css({
+              left: '100%'
+            });
+          }
         }
       },
       cbEnd: ev => {
         // 1、拖拽结束后修正拖出窗口的问题
         // 2、根据抬起后停留的位置，计算悬浮位置
         // 根据开始拖拽的位置与结束后的位置对比，看是否执行点击事件
-        let curPos = container.offset();
-        let moveRevt = container[0].getBoundingClientRect();
+        let endRevt = container[0].getBoundingClientRect();
 
-        const mx = parseInt(moveRevt.left) - parseInt(domRect.left);
-        const my = parseInt(moveRevt.top) - parseInt(domRect.top);
+        const mx = parseInt(endRevt.left) - parseInt(domRect.left);
+        const my = parseInt(endRevt.top) - parseInt(domRect.top);
 
-        let center = $(window).width() / 2;
-        let boxW = floatIcon.width();
-        // console.log('22222222222222', x, y);
-        if (listBox.hasClass('hidden')) {
-          boxW = listBox.outerWidth();
-        }
-        let divCenter = boxW / 2;
-        // console.log('111111', mx, my);
-        if (!isMover && (Math.abs(mx) <= 5 && Math.abs(my) <= 5)) {
-          let isHide = listBox.hasClass('hidden');
+        if (!isMover || (Math.abs(mx) <= 15 && Math.abs(my) <= 15)) {
           if ($(ev.target).hasClass('button-icon-box')) {
             //浮球与隐藏做的事情
             ev.preventDefault();
@@ -282,34 +336,15 @@ class Init {
               // this.updateFloatStatus('toggleListbox');
             }, 50);
           }
-          clearTimeout(timer);
+          clearTimeout(this.timer);
         } else {
-          if (center >= x + divCenter) {
-            x = 0;
-          } else {
-            // console.log('宽度', $(window).width(), container.width());
-            x = searchWidth - (boxW > 50 ? boxW : 0);
-            container.addClass('flex-dir-right');
-          }
-          container.css({
-            left: x + 'px',
-            top: y + 'px'
-          });
+          // 修正拖拽结束后，浮球的位置
+          this.correctPosition({ x, y });
         }
 
         isMover = false;
-        //end后，如列表未展开，则倒计划隐藏一半，如展开或中途操作，则清除到计划
-        if (!listBox.hasClass('hidden')) {
-          clearTimeout(timer);
-          const isLeft = container.hasClass('flex-dir-right');
-          const left = this.searchWidth + 25 + 'px';
-          timer = setTimeout(() => {
-            container.css({
-              left: !isLeft ? '-25px' : left,
-              opacity: 0.5
-            });
-          }, 3000);
-        }
+        // end后，如列表未展开，则倒计划隐藏一半，如展开或中途操作，则清除到计划
+        this.hideFloating();
       }
     });
   }

@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
   mode: 'development',
   entry: './src/index.js',
@@ -14,8 +15,17 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader']
+        test: /\.jpg|\.png|\.jpeg|\.svg|\.ttf|\.woff$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: './img',
+              publicPath: './img'
+            }
+          }
+        ]
       }
     ]
   },
@@ -33,12 +43,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'demo',
       template: './src/index.html'
-    }),
-    new HtmlWebpackPlugin({
-      title: '跳转',
-      template: './src/demo.html',
-      filename: 'demo.html',
-      chunks: []
     })
   ]
 };
