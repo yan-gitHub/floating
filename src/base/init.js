@@ -51,7 +51,9 @@ class Init {
             />
           </div>
           <p class="bg-dicr">微信公众号.in游戏竞技场</p>
-          <div class="bg-tip">长按识别二维码</div>
+          <div class="bg-tip">${
+            this.isWeiXin ? '微信扫一扫' : '长按识别二维码'
+          }</div>
         </div>
         <div id="button-group-box"></div>
         <div class="close-button"></div>
@@ -66,6 +68,16 @@ class Init {
         </div>`);
 
     buttonEle.appendTo($('#button-group-box'));
+  }
+
+  //判断是否是微信浏览器的函数
+  isWeiXin() {
+    let ua = window.navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   createHtml() {
@@ -120,6 +132,7 @@ class Init {
   toggleListbox() {
     const container = $('#floating-container');
     const listBox = $('.list-box');
+    let floatIcon = $('.button-icon-box');
     // 如果浮球在右边显示要修正一下位置
     if (container.hasClass('flex-dir-right')) {
       if (listBox.hasClass('hidden')) {
@@ -131,6 +144,9 @@ class Init {
       } else {
         //展开并修正位置
         listBox.addClass('hidden');
+        floatIcon.css({
+          left: 'calc(100% - 50px)'
+        });
         container.css({
           left: this.searchWidth - listBox.outerWidth()
         });
@@ -345,6 +361,29 @@ class Init {
         isMover = false;
         // end后，如列表未展开，则倒计划隐藏一半，如展开或中途操作，则清除到计划
         this.hideFloating();
+      }
+    });
+
+    $(document).on('click', ev => {
+      let touchX = ev.clientX || ev.originalEvent.changedTouches[0].clientX;
+      let touchY = ev.clientY || ev.originalEvent.changedTouches[0].clientY;
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (listBox.hasClass('hidden')) {
+        let tempRect = container[0].getBoundingClientRect();
+        const { top, right, bottom, left } = tempRect;
+        // (touchX < left || touchX > right) &&
+        // (touchY < top || touchY > bottom)
+        if (
+          !(touchX > left && touchX < right && touchY > top && touchY < bottom)
+        ) {
+          listBox.removeClass('hidden');
+          if (container.hasClass('flex-dir-right')) {
+            container.css({
+              left: this.searchWidth
+            });
+          }
+        }
       }
     });
   }

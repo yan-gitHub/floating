@@ -247,7 +247,7 @@
   padding-left: 10px;
 }
 .flex-dir-right .button-icon-box {
-  left: calc(100% - 0px);
+  left: 100%;
   /* right: 0px*/
 }
 
