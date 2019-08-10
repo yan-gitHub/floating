@@ -42,13 +42,5 @@ $(() => {
     }
   };
 
-  window.addEventListener(
-    'popstate',
-    function(e) {
-      alert('我监听到了浏览器的返回按钮事件啦');
-    },
-    false
-  );
-
   getDatasource();
 });

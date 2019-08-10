@@ -24,10 +24,12 @@ class Init {
       erpv: 4, //二维码展开
       target: 5 //跳转的按钮
     };
+
     this.searchWidth = window.screen.availWidth;
     this.searchHeight = window.screen.availHeight;
     this.clickHandler = null;
     this.timer = null;
+    this.isReshow = false;
   }
 
   render() {
@@ -35,10 +37,14 @@ class Init {
     this.createHtml();
     // 绑定事件
     this.bindEvent();
+    // 全局事件
+    this.bindWindowEvent();
   }
 
   createFlotation(isEvent = false) {
     const data = this.data;
+    // 页面返回事件弹窗比正常的多一个按钮，直接写在弹窗事件里添加rpqm
+    // this.createButton();
     //创建弹窗
     var floatEle = $(`<div class="fixed-section-block"><div class="fixed-content-box" flex="main:center cross:center">
       <div class="fixed-bg-box">
@@ -52,7 +58,7 @@ class Init {
           </div>
           <p class="bg-dicr">微信公众号.in游戏竞技场</p>
           <div class="bg-tip">${
-            this.isWeiXin ? '微信扫一扫' : '长按识别二维码'
+            this.isWeiXin() ? '长按识别二维码' : '微信扫一扫'
           }</div>
         </div>
         <div id="button-group-box"></div>
@@ -83,29 +89,14 @@ class Init {
   createHtml() {
     const data = this.data;
     const leng = (data.button || []).length;
-    const list = (data.button || []).map((v, idx) => {
-      if (+v.is_active !== 1) {
-        return '';
-      }
-      if (idx == 0) {
-        return `<li class="hide-floating">
-                <img src="https://xcx.api.test.1hocang.com/static/img/icn_hide@3x.png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
-                <span>隐藏</span>
-              </li>`;
-      } else if (idx == leng - 1) {
-        return `<li class="wechart">
-                <img src="https://xcx.api.test.1hocang.com/static/img/icn_wechat@3x.png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;" />
-                <span>微信公众号</span>
-              </li>`;
-      } else {
-        return `<li class="target">
-                <a href="${v.url || ''}">
+    const list = (data.button || []).slice(0, 3).map((v, idx) => {
+      return `<li class="target" data-id="${v.id}">
+                <a href="${v.url || ''}" target="_blank">
                   <img src="${v.img ||
                     ''}" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
-                  <span>${(v.title || '').substr(0, 4)}</span>
+                  <span>${v.title || ''}</span>
                 </a>
               </li>`;
-      }
     });
     //正常样式 <ul flex="main:left cross:center">
     // <div id="floating-container" class="floating-container flex-dir-right">
@@ -120,7 +111,15 @@ class Init {
           </div>
           <div class="list-box">
             <ul flex="main:left cross:center box:last">
-            ${list.join('')}
+              <li class="hide-floating" data-id="1">
+                <img src="https://xcx.api.test.1hocang.com/static/img/icn_hide@3x.png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;"/>
+                <span>隐藏</span>
+              </li>
+              <li class="wechart" data-id="2">
+                <img src="https://xcx.api.test.1hocang.com/static/img/icn_wechat@3x.png" onerror="this.style.opacity = 0;" onload="this.style.opacity = 1;" style="opacity: 0;" />
+                <span>微信公众号</span>
+              </li>
+              ${list.join('')}
             </ul>
           </div>
         </div>
@@ -157,6 +156,12 @@ class Init {
         left: 0
       });
     }
+    if (listBox.hasClass('hidden')) {
+      this.adLog({
+        float_id: this.data.id,
+        type: this.logMap['open']
+      });
+    }
   }
 
   isMobile() {
@@ -167,7 +172,7 @@ class Init {
   adLog(params = {}, eventType = 'action') {
     switch (eventType) {
       case 'click':
-        $.post('https://h5game.api.crotnet.com/loating/api/cilck', params);
+        $.post('https://h5game.api.crotnet.com/loating/api/click', params);
         break;
       case 'action':
         $.post('https://h5game.api.crotnet.com/loating/api/action', params);
@@ -177,6 +182,7 @@ class Init {
   hideFloating() {
     let container = $('#floating-container');
     let listBox = $('.list-box');
+    let floatIcon = $('.button-icon-box');
     if (!listBox.hasClass('hidden')) {
       clearTimeout(this.timer);
       const isLeft = container.hasClass('flex-dir-right');
@@ -186,6 +192,11 @@ class Init {
           left: !isLeft ? '-25px' : left,
           opacity: 0.5
         });
+        if (isLeft) {
+          floatIcon.css({
+            left: '100%'
+          });
+        }
       }, 3000);
     }
   }
@@ -201,11 +212,10 @@ class Init {
     }
     let divCenter = boxW / 2;
     // const { x, center, divCenter } = payload;
+    console.log(x, divCenter);
     if (center >= x + divCenter) {
       x = 0;
     } else {
-      // console.log('宽度', $(window).width(), container.width());
-      // (boxW > 50 ? boxW : 0)
       x = this.searchWidth - (boxW > 50 ? boxW : 50);
       container.addClass('flex-dir-right');
     }
@@ -220,6 +230,7 @@ class Init {
     });
   }
   bindEvent() {
+    const That = this;
     let container = $('#floating-container');
     let blankFloating = $('.fixed-section-block');
     let floatIcon = $('.button-icon-box');
@@ -229,16 +240,21 @@ class Init {
     blankFloating.on(eventName, ev => {
       if ($(ev.target).hasClass('close-button')) {
         blankFloating.removeClass('show-floating');
+        // 当次打弹窗只显示一次
+        // That.isReshow = false;
+        $('#button-group').remove();
       } else if ($(ev.target).hasClass('button-group')) {
         blankFloating.removeClass('show-floating');
+        $('#button-group').remove();
         //仍要退出去哪里？
-        window.location.href = '';
+        // window.location.href = '';
+        // 直接向前返回
+        window.history.go(-1);
+        // alert('仍要');
       }
     });
-    // 页面返回事件弹窗比正常的多一个按钮，直接写在弹窗事件里添加rpqm
-    // this.createButton();
+
     let domRect = container[0].getBoundingClientRect();
-    let oriPos = container.offset();
     let y = 0;
     let x = 0;
     let distenceX = '';
@@ -246,10 +262,6 @@ class Init {
     let isMover = false;
     container.Tdrag({
       scope: '',
-      // animation_options: {
-      //   duration: 200, //每次动画的事件
-      //   easing: 'ease-in' //动画特效 ease-out、ease-in、linear
-      // },
       cbStart: ev => {
         domRect = container[0].getBoundingClientRect();
         let curPos = container.offset();
@@ -260,9 +272,6 @@ class Init {
         container.css('opacity', 1);
       },
       cbMove: (obj, self, ev) => {
-        if (!ev.cancelable) {
-          return;
-        }
         clearTimeout(this.timer);
         isMover = true;
         let touchX = ev.clientX || ev.originalEvent.changedTouches[0].clientX;
@@ -284,6 +293,7 @@ class Init {
           if (listBox.hasClass('hidden')) {
             floatIcon.css({
               left: 'calc(100% - 50px)'
+              // left: '100%'
             });
           } else {
             floatIcon.css({
@@ -301,31 +311,34 @@ class Init {
         const mx = parseInt(endRevt.left) - parseInt(domRect.left);
         const my = parseInt(endRevt.top) - parseInt(domRect.top);
 
-        if (!isMover || (Math.abs(mx) <= 15 && Math.abs(my) <= 15)) {
+        if (!isMover && (Math.abs(mx) <= 10 && Math.abs(my) <= 10)) {
           if ($(ev.target).hasClass('button-icon-box')) {
             //浮球与隐藏做的事情
             ev.preventDefault();
             ev.stopPropagation();
             if (!isMover) {
-              this.toggleListbox();
               this.adLog(
                 {
-                  float_id: 7,
-                  button_id: 5
+                  float_id: this.data.id,
+                  button_id: this.data.id
                 },
                 'click'
               );
-              this.adLog({
-                float_id: 7,
-                type: this.logMap['open']
-              });
+              this.toggleListbox();
             }
           } else if ($(ev.target).hasClass('hide-floating')) {
             // 删除整个浮层与浮球
             container.remove();
             blankFloating.remove();
+            // this.adLog(
+            //   {
+            //     float_id: this.data.id,
+            //     button_id: id
+            //   },
+            //   'click'
+            // );
             this.adLog({
-              float_id: 7,
+              float_id: this.data.id,
               type: this.logMap['hide']
             });
           } else if ($(ev.target).hasClass('wechart')) {
@@ -335,19 +348,23 @@ class Init {
             blankFloating.addClass('show-floating');
             // listBox.removeClass('hidden');
             this.toggleListbox();
-            // this.adLog({
-            //   float_id: 7,
-            //   type: this.logMap['erpv']
-            // });
-          } else {
             this.adLog({
-              float_id: 7,
-              type: this.logMap['target']
+              float_id: this.data.id,
+              type: this.logMap['erpv']
             });
+          } else {
+            const id = $(ev.target).data('id') || '';
+            this.adLog(
+              {
+                float_id: this.data.id,
+                button_id: id
+              },
+              'click'
+            );
             // 为了保证打点发出去，延迟跳转
             setTimeout(() => {
               // console.log('跳转', $(ev.target).href);
-              window.location.href = $(ev.target).href;
+              window.location.href = ev.target.href;
               //其它menu跳转,无特殊处理
               // this.updateFloatStatus('toggleListbox');
             }, 50);
@@ -363,29 +380,92 @@ class Init {
         this.hideFloating();
       }
     });
-
-    $(document).on('click', ev => {
-      let touchX = ev.clientX || ev.originalEvent.changedTouches[0].clientX;
-      let touchY = ev.clientY || ev.originalEvent.changedTouches[0].clientY;
-      ev.preventDefault();
-      ev.stopPropagation();
-      if (listBox.hasClass('hidden')) {
-        let tempRect = container[0].getBoundingClientRect();
-        const { top, right, bottom, left } = tempRect;
-        // (touchX < left || touchX > right) &&
-        // (touchY < top || touchY > bottom)
-        if (
-          !(touchX > left && touchX < right && touchY > top && touchY < bottom)
-        ) {
-          listBox.removeClass('hidden');
-          if (container.hasClass('flex-dir-right')) {
-            container.css({
-              left: this.searchWidth
-            });
+    $(document)
+      .on('click', ev => {
+        let touchX =
+          ev.clientX ||
+          (ev.originalEvent && ev.originalEvent.changedTouches[0].clientX);
+        let touchY =
+          ev.clientY ||
+          (ev.originalEvent && ev.originalEvent.changedTouches[0].clientY);
+        console.log(1);
+        if (touchX === undefined || touchY === undefined) {
+          return;
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (listBox.hasClass('hidden')) {
+          let tempRect = container[0].getBoundingClientRect();
+          const { top, right, bottom, left } = tempRect;
+          if (
+            !(
+              touchX > left &&
+              touchX < right &&
+              touchY > top &&
+              touchY < bottom
+            )
+          ) {
+            listBox.removeClass('hidden');
+            if (container.hasClass('flex-dir-right')) {
+              container.css({
+                left: this.searchWidth
+              });
+            }
+            this.hideFloating();
           }
         }
+      })
+      .click();
+  }
+  // 全局绑定事件
+  bindWindowEvent() {
+    const That = this;
+    const fixedBlack = $('.fixed-section-block');
+    window.addEventListener('pageshow', function(e) {
+      // 公众号返回，隐藏弹窗
+      if (fixedBlack.length && fixedBlack.hasClass('show-floating')) {
+        fixedBlack.removeClass('show-floating');
+      }
+      // That.isReshow = false;
+    });
+
+    window.addEventListener('pagehide', function(e) {
+      // 公众号返回，隐藏弹窗
+      if (fixedBlack.length) {
+        fixedBlack.removeClass('show-floating');
       }
     });
+    window.addEventListener('beforeunload', function(e) {
+      // 公众号返回，隐藏弹窗
+      if (fixedBlack.length) {
+        fixedBlack.removeClass('show-floating');
+      }
+    });
+
+    // if (this.isWeiXin()) {
+    pushHistory();
+    window.addEventListener(
+      'popstate',
+      function(e) {
+        // pushHistory(); //去掉这行，监听只能执行一次
+        if (!That.isReshow) {
+          if (!this.document.querySelector('#button-group')) {
+            That.createButton();
+          }
+          fixedBlack.addClass('show-floating');
+          That.isReshow = true;
+        }
+      },
+      false
+    ); //停留在当前页面，阻止页面返回
+    function pushHistory() {
+      var state = {
+        title: 'title',
+        url: '#'
+      };
+      window.history.pushState(state, 'title', '#');
+    }
+    // }
   }
 }
 
