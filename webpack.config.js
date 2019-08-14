@@ -20,13 +20,27 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[name].[ext]',
-              outputPath: './img',
+              name: 'img/[name].[ext]',
+              // outputPath: './img',
               publicPath: './img'
             }
           }
         ]
       }
+      // {
+      //   test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
+      //   use: [
+      //     /* config.module.rule('images').use('url-loader') */
+      //     {
+      //       loader: 'url-loader',
+      //       options: {
+      //         limit: 4096,
+      //         name: 'img/[name].[ext]',
+      //         publicPath: './img'
+      //       }
+      //     }
+      //   ]
+      // }
     ]
   },
   devServer: {
@@ -43,12 +57,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'demo',
       template: './src/index.html'
-    }),
-    new HtmlWebpackPlugin({
-      title: 'demo1',
-      template: './src/demo.html',
-      filename: 'demo.html',
-      chunks: []
     })
   ]
 };

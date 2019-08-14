@@ -339,7 +339,7 @@ li.wechart {
 .fixed-content-box .fixed-bg-box {
   width: 75%;
   height: 70vh;
-  background: url(./img/bg@3x.png) no-repeat center top;
+  background: url(/img/bg@3x.png) no-repeat center top;
   background-size: contain;
   padding: 15% 13%;
   box-sizing: border-box;
@@ -399,7 +399,7 @@ li.wechart {
   cursor: pointer;
 }
 .fixed-bg-box .close-button {
-  position: absolute;
+  /* position: absolute; */
   bottom: -5%;
   left: 50%;
   width: 34px;
@@ -445,4 +445,76 @@ li.wechart {
   .wechart-erweima-sec .bg-dicr {
     font-size: 12px;
   }
+}
+
+/* 广告样式 */
+.l-contaner-y {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  height: 80px;
+  pointer-events: none;
+}
+.l-contaner-y .ad-canvas {
+  pointer-events: auto;
+  margin: auto;
+  max-width: 736px;
+  height: 100%;
+}
+
+.ad-canvas a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  border: 0;
+}
+
+.ad-canvas .close-ad {
+}
+
+.ad-canvas img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* 竖屏 */
+.skin-body-portrait-block {
+}
+/* 横屏 */
+.skin-body-landscape-block {
+}
+
+.skin-body-landscape-block .fixed-content-box {
+  width: 74%;
+  height: 80vh;
+  padding: 5% 13%;
+}
+
+.skin-body-landscape-block .fixed-bg-box .wechart-erweima-sec {
+  margin-bottom: 0;
+}
+.skin-body-landscape-block .bg-erweima img {
+  width: 37%;
+}
+
+.skin-body-landscape-block .fixed-content-box .fixed-bg-box {
+  width: 80%;
+  height: 80vh;
+  padding: 10% 10%;
+  position: relative;
+}
+
+.skin-body-landscape-block .wechart-erweima-sec .bg-tip {
+  right: 25%;
+}
+
+.skin-body-landscape-block .fixed-bg-box .close-button {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  left: auto;
+  bottom: auto;
 }

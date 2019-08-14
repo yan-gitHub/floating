@@ -1,5 +1,6 @@
-import closeImg from '../img/icn_hide@3x.png';
-import wechart from '../img/icn_wechat@3x.png';
+// import closeImg from '../img/icn_hide@3x.png';
+// import wechart from '../img/icn_wechat@3x.png';
+import * as UTIL from './util';
 
 /*
 1、判断页面有没有盒子，有？追加生成的元素，无？创建元素追加
@@ -30,6 +31,8 @@ class Init {
     this.clickHandler = null;
     this.timer = null;
     this.isReshow = false;
+
+    this.render();
   }
 
   render() {
@@ -58,7 +61,7 @@ class Init {
           </div>
           <p class="bg-dicr">微信公众号.in游戏竞技场</p>
           <div class="bg-tip">${
-            this.isWeiXin() ? '长按识别二维码' : '微信扫一扫'
+            UTIL.isWeiXin() ? '长按识别二维码' : '微信扫一扫'
           }</div>
         </div>
         <div id="button-group-box"></div>
@@ -74,16 +77,6 @@ class Init {
         </div>`);
 
     buttonEle.appendTo($('#button-group-box'));
-  }
-
-  //判断是否是微信浏览器的函数
-  isWeiXin() {
-    let ua = window.navigator.userAgent.toLowerCase();
-    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   createHtml() {
@@ -164,11 +157,6 @@ class Init {
     }
   }
 
-  isMobile() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
-  }
   adLog(params = {}, eventType = 'action') {
     switch (eventType) {
       case 'click':
@@ -179,6 +167,7 @@ class Init {
         break;
     }
   }
+
   hideFloating() {
     let container = $('#floating-container');
     let listBox = $('.list-box');
@@ -200,6 +189,7 @@ class Init {
       }, 3000);
     }
   }
+
   correctPosition(payload = {}) {
     let container = $('#floating-container');
     let floatIcon = $('.button-icon-box');
@@ -212,7 +202,6 @@ class Init {
     }
     let divCenter = boxW / 2;
     // const { x, center, divCenter } = payload;
-    console.log(x, divCenter);
     if (center >= x + divCenter) {
       x = 0;
     } else {
@@ -229,13 +218,14 @@ class Init {
       top: y + 'px'
     });
   }
+
   bindEvent() {
     const That = this;
     let container = $('#floating-container');
     let blankFloating = $('.fixed-section-block');
     let floatIcon = $('.button-icon-box');
     let listBox = $('.list-box');
-    let eventName = this.isMobile() ? 'touchend' : 'click';
+    let eventName = UTIL.isMobile() ? 'touchend' : 'click';
     // 弹窗添加事件
     blankFloating.on(eventName, ev => {
       if ($(ev.target).hasClass('close-button')) {
@@ -388,11 +378,10 @@ class Init {
         let touchY =
           ev.clientY ||
           (ev.originalEvent && ev.originalEvent.changedTouches[0].clientY);
-        console.log(1);
         if (touchX === undefined || touchY === undefined) {
           return;
         }
-        ev.preventDefault();
+        // ev.preventDefault();
         ev.stopPropagation();
         if (listBox.hasClass('hidden')) {
           let tempRect = container[0].getBoundingClientRect();
@@ -421,6 +410,9 @@ class Init {
   bindWindowEvent() {
     const That = this;
     const fixedBlack = $('.fixed-section-block');
+    const container = $('.floating-container');
+    const listBox = $('.list-box');
+    let floatIcon = $('.button-icon-box');
     window.addEventListener('pageshow', function(e) {
       // 公众号返回，隐藏弹窗
       if (fixedBlack.length && fixedBlack.hasClass('show-floating')) {
@@ -442,7 +434,6 @@ class Init {
       }
     });
 
-    // if (this.isWeiXin()) {
     pushHistory();
     window.addEventListener(
       'popstate',
@@ -465,7 +456,41 @@ class Init {
       };
       window.history.pushState(state, 'title', '#');
     }
-    // }
+
+    let resizeTimer2 = null;
+    $(window).resize(function() {
+      resizeTimer2 && clearTimeout(resizeTimer2);
+      resizeTimer2 = setTimeout(() => {
+        That.searchWidth = window.screen.availWidth;
+        That.searchHeight = window.screen.availHeight;
+        // let origtal_xy = parseInt(container.css('left')) || 0;
+        let origtal_xy = container[0].getBoundingClientRect();
+        let newLeft = origtal_xy.x;
+        let newTop = origtal_xy.y;
+        const ratio = That.searchWidth / That.searchHeight;
+        let top = newTop / ratio;
+        top = top >= That.searchHeight - 50 ? That.searchHeight - 50 : top;
+        if (container.hasClass('flex-dir-right')) {
+          if (listBox.hasClass('hidden')) {
+            container.css({
+              left: That.searchWidth - listBox.outerWidth(),
+              top: top
+            });
+          } else {
+            const differ = That.searchWidth - That.searchHeight;
+            this.console.log(newLeft, differ);
+            container.css({
+              left: newLeft + differ,
+              top: top
+            });
+          }
+        } else {
+          container.css({
+            top: top
+          });
+        }
+      }, 100);
+    });
   }
 }
 
