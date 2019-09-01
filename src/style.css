@@ -181,7 +181,11 @@
   -ms-flex-negative: 1;
   flex-shrink: 1;
 }
-
+body {
+  margin: 0;
+  /* background: pink; */
+}
+/* 浮窗 */
 .floating-container {
   position: fixed;
   top: 30%;
@@ -339,7 +343,7 @@ li.wechart {
 .fixed-content-box .fixed-bg-box {
   width: 75%;
   height: 70vh;
-  background: url(/img/bg@3x.png) no-repeat center top;
+  background: url(./img/bg@3x2.png) no-repeat center top;
   background-size: contain;
   padding: 15% 13%;
   box-sizing: border-box;
@@ -462,6 +466,7 @@ li.wechart {
   margin: auto;
   max-width: 736px;
   height: 100%;
+  position: relative;
 }
 
 .ad-canvas a {
@@ -473,6 +478,29 @@ li.wechart {
 }
 
 .ad-canvas .close-ad {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-bottom-left-radius: 8px;
+}
+.ad-canvas .close-ad::before,
+.ad-canvas .close-ad::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 5px;
+  width: 20px;
+  height: 0;
+  border-top: 2px solid #fff;
+}
+.ad-canvas .close-ad::before {
+  transform: rotate(45deg);
+}
+.ad-canvas .close-ad::after {
+  transform: rotate(-45deg);
 }
 
 .ad-canvas img {
@@ -480,41 +508,44 @@ li.wechart {
   width: 100%;
   height: 100%;
 }
-/* 竖屏 */
-.skin-body-portrait-block {
-}
-/* 横屏 */
-.skin-body-landscape-block {
-}
 
-.skin-body-landscape-block .fixed-content-box {
-  width: 74%;
-  height: 80vh;
-  padding: 5% 13%;
-}
+@media all and (orientation: landscape) {
+  .fixed-content-box {
+    width: 40%;
+    height: 100%;
+    margin: auto;
+  }
 
-.skin-body-landscape-block .fixed-bg-box .wechart-erweima-sec {
-  margin-bottom: 0;
-}
-.skin-body-landscape-block .bg-erweima img {
-  width: 37%;
-}
+  .fixed-bg-box .wechart-erweima-sec {
+    margin-bottom: 0;
+    padding-top: 10%;
+  }
+  .bg-erweima img {
+    width: 55%;
+  }
 
-.skin-body-landscape-block .fixed-content-box .fixed-bg-box {
-  width: 80%;
-  height: 80vh;
-  padding: 10% 10%;
-  position: relative;
-}
+  .fixed-content-box .fixed-bg-box {
+    width: 100%;
+    height: 100%;
+    /* padding: 10% 0; */
+    position: relative;
+  }
 
-.skin-body-landscape-block .wechart-erweima-sec .bg-tip {
-  right: 25%;
-}
+  .wechart-erweima-sec .bg-tip {
+    right: 13%;
+    top: 50%;
+    font-size: 13px;
+  }
 
-.skin-body-landscape-block .fixed-bg-box .close-button {
-  position: absolute;
-  top: 10%;
-  right: 10%;
-  left: auto;
-  bottom: auto;
+  .fixed-content-box .bg-erweima img {
+    width: 55%;
+  }
+
+  .fixed-bg-box .close-button {
+    position: absolute;
+    top: 10%;
+    right: 0;
+    left: auto;
+    bottom: auto;
+  }
 }

@@ -1,5 +1,6 @@
 import './style.css';
 import './img';
+// import './base/orientationchange-fix';
 import * as UTIL from './base/util';
 
 // 暴漏全部的jqery
@@ -34,32 +35,14 @@ $(() => {
       };
       new Init(data);
     }
+    // 测试
+    // new Init(data);
   };
 
   const getAdData = async () => {
-    // const data = await $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json');
-    const data = [
-      {
-        id: 1,
-        float_id: 0,
-        title: '测试广告1',
-        vertical_img:
-          'http://ingame.oss-cn-hangzhou.aliyuncs.com/ingame/center/2019-08-06/a4f41532ec9951a5d042f8860dcc95.jpg',
-        orizontal_img:
-          'http://ingame.oss-cn-hangzhou.aliyuncs.com/ingame/center/2019-08-06/a4f41532ec9951a5d042f8860dcc95.jpg',
-        url: 'http://h5game.mgr.crotnet.com/admin.php/game/floatad/add.html',
-        online_time: '2019-08-06 00:00:00',
-        offline_time: '2019-08-07 00:00:00',
-        is_active: 1,
-        sort: 0,
-        create_time: '2019-08-06 09:55:14',
-        update_time: '2019-08-06 09:55:14'
-      }
-    ];
-    data[0] = {
-      ...data[0],
-      direction
-    };
+    let data = (await $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json'))
+      .data;
+    data[0]['direction'] = direction;
     new Design(data);
   };
 
@@ -70,7 +53,7 @@ $(() => {
     direction = UTIL.isStand();
     body.addClass(`skin-body-${direction}-block`);
   }
-  addToClassHandler();
+  // addToClassHandler();
 
   // 浮窗
   getDatasource();
@@ -78,11 +61,11 @@ $(() => {
   // 广告
   getAdData();
 
-  let resizeTimer = null;
-  $(window).resize(function() {
-    resizeTimer = clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      addToClassHandler();
-    }, 50);
-  });
+  // let resizeTimer = null;
+  // $(window).resize(function() {
+  //   resizeTimer = clearTimeout(resizeTimer);
+  //   resizeTimer = setTimeout(() => {
+  //     addToClassHandler();
+  //   }, 50);
+  // });
 });

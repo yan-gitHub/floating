@@ -1,6 +1,7 @@
 // import closeImg from '../img/icn_hide@3x.png';
 // import wechart from '../img/icn_wechat@3x.png';
 import * as UTIL from './util';
+import { debounce } from './debounce';
 
 /*
 1、判断页面有没有盒子，有？追加生成的元素，无？创建元素追加
@@ -36,6 +37,9 @@ class Init {
   }
 
   render() {
+    //测试
+    // this.createFlotation().appendTo($('body'));
+
     //创建html
     this.createHtml();
     // 绑定事件
@@ -175,8 +179,10 @@ class Init {
     if (!listBox.hasClass('hidden')) {
       clearTimeout(this.timer);
       const isLeft = container.hasClass('flex-dir-right');
-      const left = this.searchWidth - 25 + 'px';
       this.timer = setTimeout(() => {
+        // this.searchWidth = window.screen.availWidth;
+        // this.searchHeight = window.screen.availHeight;
+        const left = window.screen.availWidth - 25 + 'px';
         container.css({
           left: !isLeft ? '-25px' : left,
           opacity: 0.5
@@ -186,6 +192,7 @@ class Init {
             left: '100%'
           });
         }
+        // console.log('定时器', left);
       }, 3000);
     }
   }
@@ -413,6 +420,10 @@ class Init {
     const container = $('.floating-container');
     const listBox = $('.list-box');
     let floatIcon = $('.button-icon-box');
+    /**
+     * 返回事件拦截，显示弹窗
+     * 进入界面push一个空的记录到浏览器，点击返回时，捕获返回事件
+     */
     window.addEventListener('pageshow', function(e) {
       // 公众号返回，隐藏弹窗
       if (fixedBlack.length && fixedBlack.hasClass('show-floating')) {
@@ -457,40 +468,47 @@ class Init {
       window.history.pushState(state, 'title', '#');
     }
 
-    let resizeTimer2 = null;
-    $(window).resize(function() {
-      resizeTimer2 && clearTimeout(resizeTimer2);
-      resizeTimer2 = setTimeout(() => {
-        That.searchWidth = window.screen.availWidth;
-        That.searchHeight = window.screen.availHeight;
-        // let origtal_xy = parseInt(container.css('left')) || 0;
-        let origtal_xy = container[0].getBoundingClientRect();
-        let newLeft = origtal_xy.x;
-        let newTop = origtal_xy.y;
-        const ratio = That.searchWidth / That.searchHeight;
-        let top = newTop / ratio;
-        top = top >= That.searchHeight - 50 ? That.searchHeight - 50 : top;
-        if (container.hasClass('flex-dir-right')) {
-          if (listBox.hasClass('hidden')) {
-            container.css({
-              left: That.searchWidth - listBox.outerWidth(),
-              top: top
-            });
+    let newDirection = UTIL.isStand();
+    let oldDirection = newDirection;
+    $(window).resize(
+      debounce(() => {
+        newDirection = UTIL.isStand();
+        if (newDirection !== oldDirection) {
+          oldDirection = newDirection;
+          That.searchWidth = window.screen.availWidth;
+          That.searchHeight = window.screen.availHeight;
+          // 计算横屏竖屏切换时，浮窗的位置，按横紧屏比例显示浮窗，避免竖屏切换横屏时，浮窗位置可不见
+          // 浮窗在右侧时，横竖切换，需要重新计算位置
+          let origtal_xy = container[0].getBoundingClientRect();
+          let newLeft = origtal_xy.x;
+          let newTop = origtal_xy.y;
+          const ratio = That.searchWidth / That.searchHeight;
+          let top = newTop / ratio;
+          top = top >= That.searchHeight - 50 ? That.searchHeight - 50 : top;
+          // const top = That.searchHeight * (newTop / That.searchWidth);
+          if (container.hasClass('flex-dir-right')) {
+            // 民航列表显示的时候，计算位置
+            if (listBox.hasClass('hidden')) {
+              container.css({
+                left: That.searchWidth - listBox.outerWidth(),
+                top: top
+              });
+            } else {
+              const differ = newLeft + (That.searchWidth - That.searchHeight);
+              container.css({
+                left:
+                  differ > That.searchWidth ? That.searchWidth - 25 : differ,
+                top: top
+              });
+            }
           } else {
-            const differ = That.searchWidth - That.searchHeight;
-            this.console.log(newLeft, differ);
             container.css({
-              left: newLeft + differ,
               top: top
             });
           }
-        } else {
-          container.css({
-            top: top
-          });
         }
-      }, 100);
-    });
+      }, 300)
+    );
   }
 }
 

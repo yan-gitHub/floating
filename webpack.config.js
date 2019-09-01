@@ -22,7 +22,7 @@ module.exports = {
             options: {
               name: 'img/[name].[ext]',
               // outputPath: './img',
-              publicPath: './img'
+              publicPath: './'
             }
           }
         ]
@@ -54,9 +54,9 @@ module.exports = {
     }
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      title: 'demo',
-      template: './src/index.html'
-    })
+    // new HtmlWebpackPlugin({
+    //   title: 'demo',
+    //   template: './src/index.html'
+    // })
   ]
 };
