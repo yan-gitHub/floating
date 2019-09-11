@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "build:cp": "npm run build && cp -r dist/* ../static/"
+    "build:cp": "npm run build && cp -r dist/* ../static/",
+    "build:cp2": "npm run build && cp -r dist/* /Users/yanshuya/yan/leam/ly-work/float_windows/trunk"
   },
   "keywords": [],
   "author": "",

@@ -69,3 +69,22 @@ export const queryToJson = url => {
 
   return result;
 };
+
+let timer = null;
+let message = [];
+export const toastr = (mes, time) => {
+  if (!mes) return;
+  message.push(mes);
+  if (timer) {
+    clearTimeout(timer);
+    $('.toastr-box').html(message.join(',\n'));
+  } else {
+    const toastr = $(`<div class="toastr-box">${mes}</div>`);
+    $('body').append(toastr);
+  }
+
+  timer = setTimeout(() => {
+    $('.toastr-box').remove();
+    message = [];
+  }, time || 2000);
+};

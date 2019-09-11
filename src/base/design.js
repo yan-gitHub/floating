@@ -1,5 +1,5 @@
 import * as UTIL from './util';
-import { baseUrl } from './config';
+import { baseUrl, adBaseUrl } from '../config';
 
 class Design {
   constructor(data) {

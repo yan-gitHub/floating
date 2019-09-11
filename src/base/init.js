@@ -2,7 +2,7 @@
 // import wechart from '../img/icn_wechat@3x.png';
 import * as UTIL from './util';
 import { debounce } from './debounce';
-import { baseUrl } from './config';
+import { baseUrl } from '../config';
 
 /*
 1、判断页面有没有盒子，有？追加生成的元素，无？创建元素追加

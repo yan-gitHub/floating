@@ -2,7 +2,7 @@ import './style.css';
 import './img';
 // import './base/orientationchange-fix';
 import * as UTIL from './base/util';
-import { baseUrl } from './config';
+import { baseUrl, adBaseUrl } from './config';
 
 // 暴漏全部的jqery
 // require('expose-loader?$!jquery');
@@ -17,45 +17,60 @@ import Design from './base/design';
 const urlParams = UTIL.queryToJson(window.location.href);
 $(() => {
   let direction = UTIL.isStand();
+  // const getDatasource = async () => {
+  //   const result =
+  //     (await $.post(
+  //       `${baseUrl}/loating/api/show`,
+  //       {
+  //         game_id: urlParams['game_id'] || '',
+  //         channel_id: urlParams['channel_id'] || ''
+  //       },
+  //       'json'
+  //     )) || {};
   const getDatasource = async () => {
-    const result = await $.post(
+    $.post(
       `${baseUrl}/loating/api/show`,
       {
-        game_id: urlParams[game_id] || '',
-        channer_id: urlParams[channer_id] || ''
+        game_id: urlParams['game_id'] || '',
+        channel_id: urlParams['channel_id'] || ''
       },
       'json'
-    );
-    let data = result.data;
-    try {
-      data = JSON.parse(data);
-    } catch (error) {}
-    if (+data.is_active === 1) {
-      data = {
-        ...data,
-        direction
-      };
-      new Init(data);
-    }
-    // 测试
-    // new Init(data);
+    ).then(res => {
+      if (res.code !== 200) {
+        // UTIL.toastr(res.message);
+        return;
+      }
+
+      let data = res.data;
+      try {
+        data = JSON.parse(data);
+      } catch (error) {}
+      if (+data.is_active === 1) {
+        data = {
+          ...data,
+          direction
+        };
+        new Init(data);
+      }
+    });
   };
 
   const getAdData = async () => {
-    let data = (await $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json'))
-      .data;
-    data[0]['direction'] = direction;
-    new Design(data);
+    // let data =
+    //   (await $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json')).data || [];
+    $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json').then(res => {
+      console.log(res);
+      if (res.code !== 200) {
+        // UTIL.toastr(res.message);
+        return;
+      }
+      const data = res.data || [];
+      if (data.length) {
+        data[0]['direction'] = direction;
+        new Design(data);
+      }
+    });
   };
-
-  function addToClassHandler() {
-    let body = $('body');
-    body.removeClass('skin-body-portrait-block');
-    body.removeClass('skin-body-landscape-block');
-    direction = UTIL.isStand();
-    body.addClass(`skin-body-${direction}-block`);
-  }
-  // addToClassHandler();
 
   // 浮窗
   getDatasource();
