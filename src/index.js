@@ -2,25 +2,27 @@ import './style.css';
 import './img';
 // import './base/orientationchange-fix';
 import * as UTIL from './base/util';
+import { baseUrl } from './config';
 
 // 暴漏全部的jqery
 // require('expose-loader?$!jquery');
 import $ from 'jquery';
 window.$ = $;
 window.jquery = $;
-const baseUrl = 'https://h5game.api.crotnet.com';
 
 require('./base/drag');
 import Init from './base/init';
 import Design from './base/design';
 
+const urlParams = UTIL.queryToJson(window.location.href);
 $(() => {
   let direction = UTIL.isStand();
   const getDatasource = async () => {
     const result = await $.post(
       `${baseUrl}/loating/api/show`,
       {
-        float_id: 7
+        game_id: urlParams[game_id] || '',
+        channer_id: urlParams[channer_id] || ''
       },
       'json'
     );

@@ -36,3 +36,36 @@ export const isStand = () => {
   }
   return direction;
 };
+
+/**
+ * 解析目标URL中的参数成json对象
+ * @param {string} url 目标URL
+ * @return {Object} 解析结果对象
+ */
+export const queryToJson = url => {
+  const query = url.substr(url.lastIndexOf('?') + 1);
+  let params = query.split('&');
+  const len = params.length;
+  let result = {};
+
+  for (let i = 0; i < len; i++) {
+    if (!params[i]) {
+      continue;
+    }
+    const param = params[i].split('=');
+    const key = param[0];
+    const value = param[1];
+
+    const item = result[key];
+    if ('undefined' === typeof item) {
+      result[key] = value;
+    } else if (Object.prototype.toString.call(item) == '[object Array]') {
+      item.push(value);
+    } else {
+      // 这里只可能是string了
+      result[key] = value;
+    }
+  }
+
+  return result;
+};

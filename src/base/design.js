@@ -1,4 +1,5 @@
 import * as UTIL from './util';
+import { baseUrl } from './config';
 
 class Design {
   constructor(data) {
@@ -76,7 +77,7 @@ class Design {
     const {
       data: { id, direction }
     } = this;
-    $.post('//h5game.api.crotnet.com/loating/api/ad_count', {
+    $.post(`${baseUrl}/loating/api/ad_count`, {
       ad_id: id || '',
       // direction: direction === 'portrait' ? 'v' : 'o',
       ...params

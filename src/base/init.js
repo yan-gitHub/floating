@@ -2,6 +2,7 @@
 // import wechart from '../img/icn_wechat@3x.png';
 import * as UTIL from './util';
 import { debounce } from './debounce';
+import { baseUrl } from './config';
 
 /*
 1、判断页面有没有盒子，有？追加生成的元素，无？创建元素追加
@@ -164,10 +165,10 @@ class Init {
   adLog(params = {}, eventType = 'action') {
     switch (eventType) {
       case 'click':
-        $.post('https://h5game.api.crotnet.com/loating/api/click', params);
+        $.post(`${baseUrl}/loating/api/click`, params);
         break;
       case 'action':
-        $.post('https://h5game.api.crotnet.com/loating/api/action', params);
+        $.post(`${baseUrl}/loating/api/action`, params);
         break;
     }
   }
