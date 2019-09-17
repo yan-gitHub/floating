@@ -165,10 +165,10 @@ class Init {
   adLog(params = {}, eventType = 'action') {
     switch (eventType) {
       case 'click':
-        $.post(`${baseUrl}/loating/api/click`, params);
+        $.post(`${baseUrl}/loating/napi/click`, params);
         break;
       case 'action':
-        $.post(`${baseUrl}/loating/api/action`, params);
+        $.post(`${baseUrl}/loating/napi/action`, params);
         break;
     }
   }

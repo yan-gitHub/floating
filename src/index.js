@@ -20,7 +20,7 @@ $(() => {
   // const getDatasource = async () => {
   //   const result =
   //     (await $.post(
-  //       `${baseUrl}/loating/api/show`,
+  //       `${baseUrl}/loating/napi/show`,
   //       {
   //         game_id: urlParams['game_id'] || '',
   //         channel_id: urlParams['channel_id'] || ''
@@ -29,7 +29,7 @@ $(() => {
   //     )) || {};
   const getDatasource = async () => {
     $.post(
-      `${baseUrl}/loating/api/show`,
+      `${baseUrl}/loating/napi/show`,
       {
         game_id: urlParams['game_id'] || '',
         channel_id: urlParams['channel_id'] || ''
@@ -42,6 +42,7 @@ $(() => {
       }
 
       let data = res.data;
+      if (!data) return;
       try {
         data = JSON.parse(data);
       } catch (error) {}
@@ -57,7 +58,7 @@ $(() => {
 
   const getAdData = async () => {
     // let data =
-    //   (await $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json')).data || [];
+    //   (await $.post(`${baseUrl}/loating/napi/ad_show`, {}, 'json')).data || [];
     $.post(`${baseUrl}/loating/api/ad_show`, {}, 'json').then(res => {
       console.log(res);
       if (res.code !== 200) {

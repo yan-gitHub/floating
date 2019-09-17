@@ -52,11 +52,5 @@ module.exports = {
         secure: false // 设置支持https协议的代理
       }
     }
-  },
-  plugins: [
-    // new HtmlWebpackPlugin({
-    //   title: 'demo',
-    //   template: './src/index.html'
-    // })
-  ]
+  }
 };
